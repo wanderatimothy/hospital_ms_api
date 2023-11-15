@@ -21,6 +21,11 @@ return new class extends Migration
             $table->string('title',150)->nullable();
             $table->string('gender',10);
             $table->string('email');
+            $table->string('nationality')->nullable();
+            $table->string('ethinicity')->nullable();
+            $table->string('national_number')->nullable();
+            $table->date('date_of_birth')->nullable();
+            $table->string('national_number_type')->nullable();
             $table->string('phone_number');
             $table->string('blood_group');
             $table->date('last_visit_date')->nullable();

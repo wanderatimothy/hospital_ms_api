@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserTypeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -15,14 +16,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::controller(AuthController::class)->name('auth.')->group(function(){
+    Route::post('/login' , 'login')->name('login');
+    Route::post('/logout' , 'logout')->name('login');
 });
 
-Route::name('user_types.')->prefix('user_types')->controller(UserTypeController::class)->group(function(){
-    Route::get('/','index')->name('all');
-    Route::post('/','store')->name('show');
-    Route::post('/show','show')->name('show');
-    Route::post('/update','update')->name('update');
-    Route::post('/{userType}/delete','destroy')->name('delete');
+Route::middleware('auth:api')->group(function () {
+    Route::name('user_types.')->prefix('user_types')->controller(UserTypeController::class)->group(function(){
+        Route::get('/','index')->name('all');
+        Route::post('/','store')->name('show');
+        Route::post('/show','show')->name('show');
+        Route::post('/update','update')->name('update');
+        Route::post('/{userType}/delete','destroy')->name('delete');
+    });
 });
+
