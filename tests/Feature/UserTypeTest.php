@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use App\Models\UserType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -15,7 +16,13 @@ class UserTypeTest extends TestCase
      */
     public function test_getting_list_of_user_types(): void
     {
-        $response = $this->get('/api/user_types');
+        $user =  User::factory()->count(1)->create();
+
+        $token = $user->createToken('web.auth',['normal.access'])->accessToken;
+
+        $response = $this->get('/api/user_types', [
+            'Authorization' => 'Bearer '. $token,
+        ]);
 
         $response->assertStatus(200);
     }
@@ -23,6 +30,10 @@ class UserTypeTest extends TestCase
      * Test creating a new user type.
      */
     public function test_create_new_user_type(): void {
+
+        $user =  User::factory()->count(1)->create();
+
+        $token = $user->createToken('web.auth',['normal.access'])->accessToken;
 
         $response = $this->post('/api/user_types', [
             'name'=>  $word = fake()->word(),
@@ -39,9 +50,15 @@ class UserTypeTest extends TestCase
     }
 
     public function test_validation_failure_when_creating_user_type():void{
+        $user =  User::factory()->count(1)->create();
+
+        $token = $user->createToken('web.auth',['normal.access'])->accessToken;
+
 
         $response = $this->post('/api/user_types', [
             'name'=> '',
+        ],[
+            'Authorization' => 'Bearer '. $token,
         ]);
 
         $response->assertStatus(422);
@@ -59,12 +76,18 @@ class UserTypeTest extends TestCase
 
     public function  test_update_user_type(): void {
 
+        $user =  User::factory()->count(1)->create();
+
         $user_type = UserType::factory()->count(1)->create();
+
+        $token = $user->createToken('web.auth',['normal.access'])->accessToken;
 
         $response = $this->post("/api/user_types/update", [
             'type_id' => $user_type->first()->id,
             "name"=> $word = fake()->word(),
             "updated_by" =>  1
+        ],[
+            'Authorization' => 'Bearer '. $token,
         ]);
 
         $response->assertStatus(201);
@@ -79,10 +102,17 @@ class UserTypeTest extends TestCase
 
     public function test_show_single_user_type(): void {
 
+        $user =  User::factory()->count(1)->create();
+
         $user_type = UserType::factory()->count(1)->create();
+
+        $token = $user->createToken('web.auth',['normal.access'])->accessToken;
+
 
         $response = $this->post('/api/user_types/show', [
             'type_id'=> $user_type->first()->id,
+        ],[
+            'Authorization' => 'Bearer '. $token,
         ]);
 
         $response->assertStatus(200);
