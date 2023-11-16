@@ -27,7 +27,6 @@ class AuthenticationTest extends TestCase
         $response->assertJsonStructure([
             'data' => [
                 'access_token',
-                'refresh_token',
                 'token_type',
                 'expires_at',
                 'scopes'

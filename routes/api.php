@@ -23,7 +23,7 @@ Route::controller(AuthController::class)
     Route::post('/logout' , 'logout')->name('login');
 });
 
-Route::middleware('auth:api')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::name('user_types.')->prefix('user_types')->controller(UserTypeController::class)->group(function(){
         Route::get('/','index')->name('all');
         Route::post('/','store')->name('show');

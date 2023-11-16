@@ -21,26 +21,29 @@ class AuthController extends Controller
             return ApiResponse::validationErrorResponse($validator);
         }
 
-        if (Auth::attempt($request->only('email' , 'password'))) {
+        $credentials = $request->only('email' , 'password');
+
+        if (Auth::attempt($credentials)) {
 
             $user = Auth::user();
 
-            $tokenResult = $user->createToken('web.auth', ['normal.access']); // Assign scopes here
+            $expiry =  now()->addMinutes(1440);
+            $scopes = ['normal.access'];
+
+            $tokenResult = $user->createToken('web.auth', $scopes, $expiry); // Assign scopes here
 
             $message = 'Welcome back '. $user->full_name . '!';
 
             return ApiResponse::successResponse([
-                'access_token' => $tokenResult->accessToken,
-                'refresh_token' => $tokenResult->refreshToken,
+                'access_token' => $tokenResult->plainTextToken,
                 'token_type' => 'Bearer',
-                'expires_at' => $tokenResult->token->expires_at,
-                'scopes' => $tokenResult->token->scopes, // Include scopes in the response
+                'expires_at' => $expiry->toDateString(),
+                'scopes' =>   $scopes// Include scopes in the response
             ],$message,202);
 
         } else {
             return ApiResponse::failureResponse([
                 'access_token' => null,
-                'refresh_token' => null,
                 'scopes' => [],
                 'expires_at'=> null,
                 'token_type' => 'Bearer',
