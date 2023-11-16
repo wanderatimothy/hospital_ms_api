@@ -6,6 +6,7 @@ use App\Models\Medication;
 use App\Utils\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class MedicationController extends Controller
 {
@@ -16,7 +17,6 @@ class MedicationController extends Controller
     {
         $limit = request()->has("limit") ? request("limit") :10;
         $medications =Medication::with('lastModifiedBy:full_name')
-        ->query()
         ->select("title","code","description","price","updated_at")
         ->when(request()->has("search_word"), function ($query) {
            return $query->where('title','like', '%' . request()->search_word . '%' )
@@ -39,7 +39,7 @@ class MedicationController extends Controller
             'title'=> 'required|max:255|min:2',
             'code' => 'required|unique:medications,code',
             'description' => 'required|string',
-            'price' => 'sometimes|number'
+            'price' => 'sometimes|numeric'
         ]);
 
         if ($validator->fails()) {
@@ -96,9 +96,9 @@ class MedicationController extends Controller
 
         $validator = Validator::make(request()->all(), [
             'title'=> 'required|max:255|min:2',
-            'code' => 'required|unique:medications,code',
+            'code' => ['required',Rule::unique('user_types','name')->ignore($medication->id)],
             'description' => 'required|string',
-            'price' => 'sometimes|number'
+            'price' => 'sometimes|numeric'
         ]);
 
         if ($validator->fails()) {

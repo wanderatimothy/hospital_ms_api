@@ -132,4 +132,5 @@ class UserTypeTest extends TestCase
         $response->assertStatus(201);
 
     }
+    
 }
