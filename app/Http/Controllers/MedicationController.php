@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Medication;
+use App\Utils\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class MedicationController extends Controller
 {
@@ -12,15 +14,20 @@ class MedicationController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $limit = request()->has("limit") ? request("limit") :10;
+        $medications =Medication::with('lastModifiedBy:full_name')
+        ->query()
+        ->select("title","code","description","price","updated_at")
+        ->when(request()->has("search_word"), function ($query) {
+           return $query->where('title','like', '%' . request()->search_word . '%' )
+           ->orWhere('code','like', '%' . request()->search_word . '%' )
+           ->orWhere('description','like', '%' . request()->search_word . '%' )
+           ->orWhere('updated_at','like', '%' . request()->search_word . '%' ); 
+        })
+        ->orderBy('id' , 'desc')
+        ->paginate($limit);
+        return ApiResponse::dataResponse($medications);
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -28,31 +35,89 @@ class MedicationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make(request()->all(), [
+            'title'=> 'required|max:255|min:2',
+            'code' => 'required|unique:medications,code',
+            'description' => 'required|string',
+            'price' => 'sometimes|number'
+        ]);
+
+        if ($validator->fails()) {
+            return ApiResponse::validationErrorResponse($validator);
+        }
+
+        $medication = new Medication();
+
+        $medication->title = $request->title;
+        $medication->code = $request->code;
+        $medication->description = $request->description;
+        $medication->price = $request->price?$request->price:null;
+        $medication->created_by = $medication->last_modified_by = auth()->user()->id;
+
+        if($medication->save()) {
+         return ApiResponse::
+         successResponse($medication->only('id','title','code','description','price'),'Operation was successful!');
+        }
+
+        return ApiResponse::failureResponse($request->all(),'Operation wasnot successful');
+
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Medication $medication)
+    public function show(Request $request)
     {
-        //
+        $medication = Medication::with([
+            'lastModifiedBy:full_name,id,email,image',
+            'createdBy:full_name,id,email,image'
+        ])
+        ->find($request->medication_id);
+
+        if (!$medication) {
+            return ApiResponse::errorResponse('RESOURCE_NOT_FOUND','record not found in the system',404);
+        }
+
+        return ApiResponse::dataResponse($medication);
+
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Medication $medication)
-    {
-        //
-    }
-
+    
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Medication $medication)
+    public function update(Request $request)
     {
-        //
+        $medication = Medication::find($request->medication_id);
+
+        if (!$medication) {
+            return ApiResponse::errorResponse('RESOURCE_NOT_FOUND','record not found in the system',404);
+        }
+
+        $validator = Validator::make(request()->all(), [
+            'title'=> 'required|max:255|min:2',
+            'code' => 'required|unique:medications,code',
+            'description' => 'required|string',
+            'price' => 'sometimes|number'
+        ]);
+
+        if ($validator->fails()) {
+            return ApiResponse::validationErrorResponse($validator);
+        }
+
+        $medication->title = $request->title;
+        $medication->code = $request->code;
+        $medication->description = $request->description;
+        $medication->price = $request->price?$request->price:null;
+        $medication->last_modified_by = auth()->user()->id;
+
+        if($medication->update()) {
+         return ApiResponse::
+         successResponse($medication->only('id','title','code','description','price'),'Operation was successful!',202);
+        }
+
+        return ApiResponse::failureResponse($request->all(),'Operation wasnot successful');
+
     }
 
     /**
@@ -60,6 +125,10 @@ class MedicationController extends Controller
      */
     public function destroy(Medication $medication)
     {
-        //
+        if($medication->delete()){
+            return ApiResponse::successResponse($medication,'Operation was successful!',202);
+        }
+        return ApiResponse::failureResponse(request()->all(),'Operation was not successful');
+        
     }
 }

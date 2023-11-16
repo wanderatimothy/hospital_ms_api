@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MedicationController;
 use App\Http\Controllers\UserTypeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,10 +27,17 @@ Route::controller(AuthController::class)
 Route::middleware('auth:sanctum')->group(function () {
     Route::name('user_types.')->prefix('user_types')->controller(UserTypeController::class)->group(function(){
         Route::get('/','index')->name('all');
-        Route::post('/','store')->name('show');
+        Route::post('/','store')->name('create');
         Route::post('/show','show')->name('show');
         Route::post('/update','update')->name('update');
         Route::post('/{userType}/delete','destroy')->name('delete');
+    });
+    Route::name('medications.')->prefix('medications')->controller(MedicationController::class)->group(function(){
+        Route::get('/','index')->name('all');
+        Route::post('/','store')->name('create');
+        Route::post('/show','show')->name('show');
+        Route::post('/update','update')->name('update');
+        Route::post('/{medication}/delete','destroy')->name('delete');
     });
 });
 
