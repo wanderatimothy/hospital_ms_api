@@ -17,7 +17,7 @@ class MedicationController extends Controller
     {
         $limit = request()->has("limit") ? request("limit") :10;
         $medications =Medication::with('lastModifiedBy:full_name')
-        ->select("title","code","description","price","updated_at")
+        ->select("id","title","code","description","price","updated_at")
         ->when(request()->has("search_word"), function ($query) {
            return $query->where('title','like', '%' . request()->search_word . '%' )
            ->orWhere('code','like', '%' . request()->search_word . '%' )
@@ -27,9 +27,7 @@ class MedicationController extends Controller
         ->orderBy('id' , 'desc')
         ->paginate($limit);
         return ApiResponse::dataResponse($medications);
-
     }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -58,31 +56,25 @@ class MedicationController extends Controller
          return ApiResponse::
          successResponse($medication->only('id','title','code','description','price'),'Operation was successful!');
         }
-
         return ApiResponse::failureResponse($request->all(),'Operation wasnot successful');
-
     }
-
     /**
      * Display the specified resource.
      */
     public function show(Request $request)
     {
         $medication = Medication::with([
-            'lastModifiedBy:full_name,id,email,image',
-            'createdBy:full_name,id,email,image'
+            'lastModifiedBy:first_name,last_name,id,email,image',
+            'createdBy:first_name,last_name,id,email,image'
         ])
         ->find($request->medication_id);
 
         if (!$medication) {
             return ApiResponse::errorResponse('RESOURCE_NOT_FOUND','record not found in the system',404);
         }
-
-        return ApiResponse::dataResponse($medication);
+        return ApiResponse::dataResponse($medication->makeHidden(['last_modified_by' , 'created_by']));
 
     }
-
-    
     /**
      * Update the specified resource in storage.
      */
@@ -115,9 +107,7 @@ class MedicationController extends Controller
          return ApiResponse::
          successResponse($medication->only('id','title','code','description','price'),'Operation was successful!',202);
         }
-
         return ApiResponse::failureResponse($request->all(),'Operation wasnot successful');
-
     }
 
     /**
@@ -129,6 +119,5 @@ class MedicationController extends Controller
             return ApiResponse::successResponse($medication,'Operation was successful!',202);
         }
         return ApiResponse::failureResponse(request()->all(),'Operation was not successful');
-        
     }
 }

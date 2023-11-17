@@ -91,4 +91,48 @@ class MedicationTest extends TestCase
 
     }
 
+
+    public function test_delete_medication_record(){
+        
+        $user =  UserManager::createTestUser();
+
+        $this->actingAs($user);
+
+        $user_type = Medication::factory()->count(1)->create();
+
+        
+
+        $response = $this->post('/api/medications/'.$user_type->first()->id . '/delete' );
+
+        $response->assertStatus(202);
+    }
+
+
+    public  function test_show_single_medication_record(){
+        $user =  UserManager::createTestUser();
+        $this->actingAs($user);
+        $medication = Medication::factory()->count(1)->create([
+            'created_by' => $user->id,
+            'last_modified_by' => $user->id
+        ])->first();
+
+        $response = $this->post('/api/medications/show', [
+            'medication_id'=> $medication->id,
+        ]);
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'data' => [
+                'id',
+                'title',
+                'code',
+                'last_modified_by',
+                'created_by',
+                'description',
+                'updated_at',
+                'created_at',
+                'price'
+            ],
+        ]);
+    }
+
 }

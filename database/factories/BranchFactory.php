@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,13 +17,14 @@ class BranchFactory extends Factory
      */
     public function definition(): array
     {
+        $user = User::select(['id'])->orderBy('id','desc')->first();
         return [
-            "name" => $this->faker->unique()->words(random_int(1,3)),
+            "name" => $this->faker->unique()->words(),
             "address" => $this->faker->address(),
             "phone_number" => $this->faker->phoneNumber(),
             "email" => $this->faker->companyEmail(),
-            "created_by" => 1,
-            "last_modified_by" => 1
+            "created_by" =>  $user->id,
+            "last_modified_by" => $user->id
         ];
     }
 }

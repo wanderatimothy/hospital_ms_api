@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BranchController;
 use App\Http\Controllers\MedicationController;
 use App\Http\Controllers\UserTypeController;
 use Illuminate\Http\Request;
@@ -38,6 +39,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/show','show')->name('show');
         Route::post('/update','update')->name('update');
         Route::post('/{medication}/delete','destroy')->name('delete');
+    });
+    Route::name('branches.')->prefix('branches')->controller(BranchController::class)->group(function(){
+        Route::get('/','index')->name('all');
+        Route::post('/','store')->name('create');
+        Route::post('/show','show')->name('show');
+        Route::post('/update','update')->name('update');
+        Route::post('/{branch}/delete','destroy')->name('delete');
     });
 });
 
