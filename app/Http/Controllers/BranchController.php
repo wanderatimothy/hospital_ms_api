@@ -16,8 +16,8 @@ class BranchController extends Controller
     public function index()
     {
         $limit = request()->has("limit") ? request("limit") :10;
-        $branches =Branch::with('lastModifiedBy:first_name,last_name,image,id')
-        ->select("id","name","email","phone_number","address","updated_at")
+        $branches =Branch::with(['lastModifiedBy:full_name'])
+        ->select(["id","name","email","phone_number","address","updated_at"])
         ->when(request()->has("search_word"), function ($query) {
            return $query->where('name','like', '%' . request()->search_word . '%' )
            ->orWhere('phone_number','like', '%' . request()->search_word . '%' )
@@ -130,7 +130,7 @@ class BranchController extends Controller
 
         if($branch->update()) {
          return ApiResponse::
-         successResponse($branch->only('id','name','address','email','phone_number'),'Operation was successful!');
+         successResponse($branch->only('id','name','address','email','phone_number'),'Operation was successful!',202);
         }
         return ApiResponse::failureResponse($request->all(),'Operation was not successful');
 

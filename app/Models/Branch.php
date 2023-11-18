@@ -18,7 +18,7 @@ class Branch extends Model
         'created_by',
         'last_modified_by',
     ];
-
+    // Define relationships
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');

@@ -19,7 +19,7 @@ class BranchFactory extends Factory
     {
         $user = User::select(['id'])->orderBy('id','desc')->first();
         return [
-            "name" => $this->faker->unique()->words(),
+            "name" => $this->faker->unique()->word(),
             "address" => $this->faker->address(),
             "phone_number" => $this->faker->phoneNumber(),
             "email" => $this->faker->companyEmail(),
