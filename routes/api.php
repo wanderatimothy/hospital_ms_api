@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\InsuaranceProviderController;
 use App\Http\Controllers\MedicationController;
 use App\Http\Controllers\UserTypeController;
+use App\Http\Controllers\VisitController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -46,6 +48,23 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/show','show')->name('show');
         Route::post('/update','update')->name('update');
         Route::post('/{branch}/delete','destroy')->name('delete');
+    });
+
+    Route::name('visits.')->prefix('visits')->controller(VisitController::class)->group(function(){
+        Route::get('/','index')->name('all');
+        Route::post('/','store')->name('create');
+        Route::post('/show','show')->name('show');
+        Route::post('/update','update')->name('update');
+        Route::post('/{visit}/delete','destroy')->name('delete');
+    });
+    Route::name('insuarance_providers.')->prefix('insuarance_providers')
+    ->controller(InsuaranceProviderController::class)
+    ->group(function(){
+        Route::get('/','index')->name('all');
+        Route::post('/','store')->name('create');
+        Route::post('/show','show')->name('show');
+        Route::post('/update','update')->name('update');
+        Route::post('/{insuaranceProvider}/delete','destroy')->name('delete');
     });
 });
 
