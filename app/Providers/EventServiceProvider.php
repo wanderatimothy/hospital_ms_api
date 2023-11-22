@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Events\PatientUpdate;
 use App\Events\VisitUpdate;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -21,6 +22,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         VisitUpdate::class => [
             \App\Listeners\VisitUpdateListener::class
+        ],
+        PatientUpdate::class => [
+            \App\Listeners\PatientUpdateListener::class
         ]
     ];
 
