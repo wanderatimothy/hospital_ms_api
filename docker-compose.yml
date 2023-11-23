@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+
+    ngnix:
+      container_name: nginx
+      image: nginx:alpine
+      ports:
+        - "80:80"
+      depends_on:
+        - app
+        - db
+      volumes:
+        - ./back_end:/var/www
+        - ./nginx/conf.d:/etc/nginx/conf.d
+    db:
+      image: mysql:8.1
+      container_name: mysql
+      ports:
+        - "3306:3306"
+      volumes:
+        - ./mysql/data:/var/lib/mysql
+      environment:
+        - MYSQL_DATABASE=hosp
+        - MYSQL_USER=admin
+        - MYSQL_ROOT_PASSWORD=admin
+    phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      container_name: phpmyadmin
+      ports:
+        - "3400:80"
+      depends_on:
+        - db
+    app:
+      container_name: app
+      build:
+        context: ./php
+        dockerfile: ./Dockerfile
+      volumes:
+        - ./back_end:/var/www
+      ports:
+        - "8000:8000"
+
+
+
