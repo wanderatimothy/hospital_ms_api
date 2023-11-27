@@ -5,13 +5,13 @@ services:
     ngnix:
       container_name: nginx
       image: nginx:alpine
+      working_dir: /var/www/public
       ports:
-        - "80:80"
+        - "8080:80"
       depends_on:
         - app
         - db
       volumes:
-        - ./back_end:/var/www
         - ./nginx/conf.d:/etc/nginx/conf.d
     db:
       image: mysql:8.1
@@ -34,12 +34,13 @@ services:
     app:
       container_name: app
       build:
-        context: ./php
+        context: ./back_end
         dockerfile: ./Dockerfile
       volumes:
         - ./back_end:/var/www
       ports:
-        - "8000:8000"
+        - "8000:8001"
+    
 
 
 
