@@ -1,13 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BedController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\InsuaranceProviderController;
 use App\Http\Controllers\MedicationController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserTypeController;
 use App\Http\Controllers\VisitController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\WardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -90,6 +91,24 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/show','show')->name('show');
         Route::post('/update','update')->name('update');
         Route::post('/{room}/delete','destroy')->name('delete');
+    });
+    Route::name('beds.')->prefix('beds')
+    ->controller(BedController::class)
+    ->group(function(){
+        Route::get('/','index')->name('all');
+        Route::post('/','store')->name('create');
+        Route::post('/show','show')->name('show');
+        Route::post('/update','update')->name('update');
+        Route::post('/{bed}/delete','destroy')->name('delete');
+    });
+    Route::name('wards.')->prefix('wards')
+    ->controller(WardController::class)
+    ->group(function(){
+        Route::get('/','index')->name('all');
+        Route::post('/','store')->name('create');
+        Route::post('/show','show')->name('show');
+        Route::post('/update','update')->name('update');
+        Route::post('/{ward}/delete','destroy')->name('delete');
     });
 });
 
