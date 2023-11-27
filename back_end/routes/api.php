@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\InsuaranceProviderController;
 use App\Http\Controllers\MedicationController;
+use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserTypeController;
 use App\Http\Controllers\VisitController;
 use Illuminate\Http\Request;
@@ -77,6 +78,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/show','show')->name('show');
         Route::post('/update','update')->name('update');
         Route::post('/{patient}/delete','destroy')->name('delete');
+    });
+    Route::name('rooms.')->prefix('rooms')
+    ->controller(RoomController::class)
+    ->group(function(){
+        Route::get('/','index')->name('all');
+        Route::post('/','store')->name('create');
+        Route::post('/show','show')->name('show');
+        Route::post('/update','update')->name('update');
+        Route::post('/{room}/delete','destroy')->name('delete');
     });
 });
 
