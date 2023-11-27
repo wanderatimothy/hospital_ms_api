@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\PatientUpdate;
 use App\Models\Patient;
 use App\Utils\ApiResponse;
+use App\Utils\PatientService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -55,7 +56,10 @@ class PatientController extends Controller
         })
         ->orderBy('id' , 'desc')
         ->paginate($limit);
-        return ApiResponse::dataResponse($patients);
+        return ApiResponse::dataResponse([
+            'patients' => $patients,
+            'availableFields' => PatientService::PATIENT_COLUMNS 
+        ]);
 
     }
 
