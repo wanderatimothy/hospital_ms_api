@@ -5,10 +5,12 @@ use App\Http\Controllers\BedController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\InsuaranceProviderController;
 use App\Http\Controllers\MedicationController;
+use App\Http\Controllers\PatientController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserTypeController;
 use App\Http\Controllers\VisitController;
 use App\Http\Controllers\WardController;
+use App\Models\DocumentType;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -79,7 +81,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{insuaranceProvider}/delete','destroy')->name('delete');
     });
     Route::name('patients.')->prefix('patients')
-    ->controller(InsuaranceProviderController::class)
+    ->controller(PatientController::class)
     ->group(function(){
         Route::get('/','index')->name('all');
         Route::post('/','store')->name('create');
@@ -113,6 +115,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/show','show')->name('show');
         Route::post('/update','update')->name('update');
         Route::post('/{ward}/delete','destroy')->name('delete');
+    });
+    Route::name('document_types.')->prefix('document_types')
+    ->controller(DocumentType::class)
+    ->group(function(){
+        Route::get('/','index')->name('all');
+        Route::post('/','store')->name('create');
+        Route::post('/show','show')->name('show');
+        Route::post('/update','update')->name('update');
+        Route::post('/{document_type}/delete','destroy')->name('delete');
     });
 });
 
