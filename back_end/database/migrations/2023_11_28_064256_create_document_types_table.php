@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('branch_id')->references('id')->on('branches')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('created_by')->references('id')->on('users')->cascadeOnUpdate();
             $table->foreignId('last_modified_by')->references('id')->on('users')->cascadeOnUpdate();
+            $table->string('entity')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

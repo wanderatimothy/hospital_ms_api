@@ -125,5 +125,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/update','update')->name('update');
         Route::post('/{document_type}/delete','destroy')->name('delete');
     });
+    Route::name('document.')->prefix('document')
+    ->controller(DocumentType::class)
+    ->group(function(){
+        Route::get('/','index')->name('all');
+        Route::post('/','store')->name('create');
+        Route::post('/show','show')->name('show');
+        Route::post('/update','update')->name('update');
+        Route::post('/{document}/delete','destroy')->name('delete');
+    });
 });
 
