@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Branch;
+use App\Models\UserBranch;
 use App\Utils\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -145,5 +146,89 @@ class BranchController extends Controller
             return ApiResponse::successResponse($branch,'Operation was successful!',202);
         }
         return ApiResponse::failureResponse(request()->all(),'Operation was not successful');
+    }
+
+
+
+    public function add_user_to_branch(Request $request){
+
+        $validator = Validator::make(request()->all(), [
+            'user_id' => 'required|integer|exists:users,id',
+            'branch_id' => 'required|integer|exists:branches,id',
+        ]);
+
+        if ($validator->fails()) {
+            return ApiResponse::validationErrorResponse($validator);
+        }
+
+        //check if user is already in the branch
+        
+        $match = UserBranch::query()
+        ->where('user_id' , $request->user_id)
+        ->where('branch_id' , $request->branch_id)
+        ->first();
+
+        if($match){
+            return ApiResponse::failureResponse($request->all(),'User is already in the branch');
+        }
+
+        $user_branch = new UserBranch();
+
+        $user_branch->user_id = $request->user_id;
+        $user_branch->branch_id = $request->branch_id;
+        $user_branch->created_by = $user_branch->last_modified_by = auth()->user()->id;
+
+        if($user_branch->delete()){
+            return ApiResponse::successResponse(['branch_id' => $request->branch_id],'Operation was successful!',202);
+        }
+        return ApiResponse::failureResponse(request()->all(),'Operation was not successful');
+
+
+    }
+
+    public  function remove_user_from_branch(Request $request){
+        
+        $validator = Validator::make(request()->all(), [
+            'user_id' => 'required|integer|exists:users,id',
+            'branch_id' => 'required|integer|exists:branches,id',
+        ]);
+
+        if ($validator->fails()) {
+            return ApiResponse::validationErrorResponse($validator);
+        }
+
+        $match = UserBranch::query()
+        ->where('user_id' , $request->user_id)
+        ->where('branch_id' , $request->branch_id)
+        ->first();
+
+        if(!$match){
+            return ApiResponse::failureResponse($request->all(),'User is not in the branch');
+        }
+
+        if($match->delete()){
+            return ApiResponse::successResponse(['branch_id' => $request->branch_id],'Operation was successful!',202);
+        }
+        return ApiResponse::failureResponse(request()->all(),'Operation was not successful');
+
+    }
+
+
+    public function get_branches_user_can_access(Request $request){
+        
+        $user_id =  request()->has('user_id') ? $request->user_id : auth()->user()->id;
+
+        $branches =  UserBranch::with(['branch'])
+        ->query()
+        ->where('user_id' , $user_id)
+        ->get()
+        ->map(function($item){
+            return [
+                'id' => $item->branch_id,
+                'name' => $item->branch->name
+            ];
+        });
+        return ApiResponse::dataResponse($branches);
+
     }
 }

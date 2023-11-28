@@ -26,7 +26,8 @@ Route::controller(AuthController::class)
 ->prefix("auth")
 ->name('auth.')->group(function(){
     Route::post('/login' , 'login')->name('login');
-    Route::post('/logout' , 'logout')->name('login');
+    Route::post('/logout' , 'logout')->name('logout');
+    Route::post('/switch_active_branch' , 'switch_active_branch')->name('switch_active_branch');
 });
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -55,6 +56,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/show','show')->name('show');
         Route::post('/update','update')->name('update');
         Route::post('/{branch}/delete','destroy')->name('delete');
+        Route::post('/get_branches_user_can_access','get_branches_user_can_access')->name('user_can_access');
+        Route::post('/add_user_to_branch','add_user_to_branch')->name('add_user_to_branch');
+        Route::post('/remove_user_from_branch','remove_user_from_branch')->name('remove_user_from_branch');
     });
 
     Route::name('visits.')->prefix('visits')

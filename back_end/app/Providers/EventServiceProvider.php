@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Events\BranchRemoval;
+use App\Events\BranchSwitch;
 use App\Events\PatientUpdate;
 use App\Events\VisitUpdate;
 use Illuminate\Auth\Events\Registered;
@@ -25,6 +27,12 @@ class EventServiceProvider extends ServiceProvider
         ],
         PatientUpdate::class => [
             \App\Listeners\PatientUpdateListener::class
+        ],
+        BranchSwitch::class => [
+            \App\Listeners\BranchSwitchListener::class
+        ],
+        BranchRemoval::class => [
+            \App\Listeners\BranchRemovalListener::class
         ]
     ];
 

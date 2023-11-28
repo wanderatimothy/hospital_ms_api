@@ -16,7 +16,7 @@ class UserBranch extends Model
 
     public function branch(){
 
-        return $this->belongsTo(Branch::class, 'branch_id');
+        return $this->belongsTo(Branch::class, 'branch_id')->select('name');
     }
     public function user()
     {
