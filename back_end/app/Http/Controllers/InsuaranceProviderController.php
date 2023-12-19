@@ -15,7 +15,7 @@ class InsuaranceProviderController extends Controller
     public function index()
     {
         $limit = request()->has("limit") ? request("limit") :10;
-        $insuaranceProvider = InsuaranceProvider::with(['lastModifiedBy:full_name'])
+        $insuaranceProvider = InsuaranceProvider::with(['lastModifiedBy:first_name,last_name,id'])
         ->select(["id","name","email","phone_number","address","logo","updated_at"])
         ->when(request()->has("search_word"), function ($query) {
            return $query->where('name','like', '%' . request()->search_word . '%' )
@@ -44,7 +44,7 @@ class InsuaranceProviderController extends Controller
     {
         $validator = Validator::make(request()->all(), [
             'email'=> 'required|max:255|min:2|email',
-            'name' => 'required|unique:insuaranceProviders,name',
+            'name' => 'required|unique:insuarance_providers,name',
             'phone_number' => 'required|string',
             'address' => 'sometimes|string',
             'logo' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',

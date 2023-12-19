@@ -21,12 +21,12 @@ class InsuaranceProvider extends Model
     ];
 
     // Relationships
-    public function createdByUser()
+    public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function lastModifiedByUser()
+    public function lastModifiedBy()
     {
         return $this->belongsTo(User::class, 'last_modified_by');
     }

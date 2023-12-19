@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamp('discharge_time')->nullable();
             $table->string('discharge_reason')->nullable();
             $table->text('admission_notes')->nullable();
-            $table->enum('admission_type', ['emergency', 'direct' , 'holding' , 'elective'])->default('inpatient');
+            $table->enum('admission_type', ['emergency', 'direct' , 'holding' , 'elective', 'inpatient'])->default('inpatient');
             $table->foreignId('room_id')->nullable()->references('id')->on('rooms')->cascadeOnUpdate();
             $table->softDeletes();
             $table->timestamps();
