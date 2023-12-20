@@ -120,7 +120,7 @@ class InsuaranceProviderController extends Controller
         $validator = Validator::make(request()->all(), [
             'insurance_id' => 'required',
             'email'=> 'required|max:255|min:2|email',
-            'name' => 'required|unique:insuaranceProviders,name,'.$request->insurance_id,
+            'name' => 'required|unique:insuarance_providers,name,'.$request->insurance_id,
             'phone_number' => 'required|string',
             'address' => 'sometimes|string',
             'logo' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
