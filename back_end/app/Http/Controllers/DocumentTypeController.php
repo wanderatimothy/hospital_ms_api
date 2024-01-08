@@ -134,6 +134,7 @@ class DocumentTypeController extends Controller
             ->only('id','name','description'),
             'Operation was successful!' ,202);
             }
+            
         return ApiResponse::failureResponse($request->all(),'Operation was not successful');
 
     }
